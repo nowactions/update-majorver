@@ -7,7 +7,8 @@
     "lint": "eslint 'src/**.js' 'tests/**.js' --fix",
     "test": "eslint 'src/**.js' 'tests/**.js' && jest --coverage",
     "build": "ncc build src/main.js",
-    "precommit": "npm run build && git add dist/"
+    "precommit": "npm run build && git add dist/",
+    "release": "PACKAGE_VERSION=v$(grep -m1 version package.json | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag -a $PACKAGE_VERSION -m $PACKAGE_VERSION && git push --tags"
   },
   "repository": {
     "type": "git",
