@@ -1,4 +1,4 @@
-# Update Major Version Tag
+# GitHub Action: Update Major Version Tag
 
 [![Test](https://github.com/nowactions/update-majorver/workflows/Test/badge.svg)](https://github.com/nowactions/update-majorver/actions)
 [![Release](https://img.shields.io/github/release/nowactions/update-majorver.svg)](https://github.com/nowactions/update-majorver/releases)
