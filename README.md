@@ -1,5 +1,7 @@
 # Update Major Version Tag
 
+[![Test](https://github.com/nowactions/update-majorver/workflows/Test/badge.svg)](https://github.com/nowactions/update-majorver/actions)
+
 This GitHub Action updates major version tags (e.g. v1, v2) when semantic versioning tag is pushed.
 If `v1.2.3` tag is pushed, it updates `v1` tag.
 It works well with [GitHub Action versioning](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/about-actions#versioning-your-action).
