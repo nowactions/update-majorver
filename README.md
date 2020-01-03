@@ -34,7 +34,7 @@ jobs:
     name: Update Major Version Tag
     runs-on: ubuntu-latest
     steps:
-      - uses: nowactions/update-majorver@master
+      - uses: nowactions/update-majorver@v1
         with:
           github_token: ${{ secrets. GITHUB_TOKEN }}
 ```
