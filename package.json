@@ -1,0 +1,53 @@
+{
+  "name": "update-majorver",
+  "version": "0.0.1",
+  "description": "Update major version tags based on semver for GitHub Actions",
+  "main": "dist/index.js",
+  "scripts": {
+    "lint": "eslint 'src/**.js' 'tests/**.js' --fix",
+    "test": "eslint 'src/**.js' 'tests/**.js' && jest --coverage",
+    "build": "ncc build src/main.js",
+    "precommit": "npm run build && git add dist/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nowactions/update-majorver"
+  },
+  "keywords": [
+    "actions",
+    "node"
+  ],
+  "author": "nownabe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nowactions/update-majorver/issues"
+  },
+  "homepage": "https://github.com/nowactions/update-majorver#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.0",
+    "@actions/github": "^2.0.0"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.20.5",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "jest": "^24.9.0",
+    "prettier": "^1.19.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "src/update-majorver.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    }
+  }
+}

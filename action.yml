@@ -1,0 +1,16 @@
+name: Update Major Version
+description: Update major version tags for GitHub Actions based on semantic versioning tags
+author: nownabe
+inputs:
+  name:
+    description: name
+    required: true
+outputs:
+  result:
+    description: result
+runs:
+  using: node12
+  main: dist/index.js
+branding:
+  icon: tag
+  color: red
