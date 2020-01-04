@@ -39,3 +39,23 @@ jobs:
         with:
           github_token: ${{ secrets. GITHUB_TOKEN }}
 ```
+
+## Development
+
+Install dependencies.
+
+```bash
+npm install
+```
+
+Run tests.
+
+```bash
+npm test
+```
+
+### Release
+
+* Bump up the version in `package.json`
+* Commit the changes
+* Run `npm run release`
