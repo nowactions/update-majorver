@@ -4,9 +4,9 @@
   "description": "Update major version tags based on semver for GitHub Actions",
   "main": "dist/index.js",
   "scripts": {
-    "lint": "eslint 'src/**.js' 'tests/**.js' --fix",
-    "test": "eslint 'src/**.js' 'tests/**.js' && jest --coverage",
-    "build": "ncc build src/main.js",
+    "lint": "eslint 'src/**.ts' 'tests/**.ts' --fix",
+    "test": "eslint 'src/**.ts' 'tests/**.ts' && tsc --noEmit && jest --coverage",
+    "build": "tsc",
     "precommit": "npm run build && git add dist/",
     "release": "PACKAGE_VERSION=v$(grep -m1 version package.json | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag -a $PACKAGE_VERSION -m $PACKAGE_VERSION && git push --tags"
   },
@@ -29,6 +29,9 @@
     "@actions/github": "^2.0.0"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.25",
+    "@typescript-eslint/eslint-plugin": "^2.15.0",
+    "@typescript-eslint/parser": "^2.15.0",
     "@zeit/ncc": "^0.21.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.9.0",
@@ -36,7 +39,9 @@
     "eslint-plugin-prettier": "^3.1.2",
     "husky": "^4.0.5",
     "jest": "^24.9.0",
-    "prettier": "^1.19.1"
+    "prettier": "^1.19.1",
+    "ts-jest": "^24.3.0",
+    "typescript": "^3.7.4"
   },
   "jest": {
     "testEnvironment": "node",
@@ -50,6 +55,13 @@
         "lines": 80,
         "statements": 80
       }
+    },
+    "moduleFileExtensions": [
+      "js",
+      "ts"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
     }
   }
 }

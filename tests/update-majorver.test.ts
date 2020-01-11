@@ -1,17 +1,25 @@
+/* eslint @typescript-eslint/no-explicit-any: 0 */
+/* eslint @typescript-eslint/camelcase: 0 */
+
+import * as core from "@actions/core";
+import { GitHub, context } from "@actions/github";
+import run from "../src/update-majorver";
+
+import { mocked } from "ts-jest/utils";
+
 jest.mock("@actions/core");
 jest.mock("@actions/github");
 
-const core = require("@actions/core");
-const { GitHub, context } = require("@actions/github");
-const run = require("../src/update-majorver");
+const mockedContext = mocked(context, true);
 
 describe("Update Major Version", () => {
-  let updateRef, createRef;
+  let updateRef: jest.Mock<any, any>;
+  let createRef: jest.Mock<any, any>;
 
   beforeEach(() => {
-    core.getInput = jest.fn().mockReturnValueOnce("mygithubtoken");
+    jest.spyOn(core, "getInput").mockReturnValueOnce("mygithubtoken");
     context.ref = "refs/tags/v1.2.3";
-    context.repo = { owner: "nowactions", repo: "update-majorver" };
+    mockedContext.repo = { owner: "nowactions", repo: "update-majorver" };
     context.payload = { head_commit: { id: "commit_sha" } };
 
     updateRef = jest.fn();
@@ -21,13 +29,13 @@ describe("Update Major Version", () => {
   test("Create a new major tag", async () => {
     const github = {
       git: {
-        getRef: async () => {
+        getRef: async (): Promise<void> => {
           throw "error";
         },
         createRef
       }
     };
-    GitHub.mockImplementation(() => github);
+    mocked(GitHub as any).mockImplementation(() => github);
 
     await run();
 
@@ -42,11 +50,12 @@ describe("Update Major Version", () => {
   test("Update an existing major tag", async () => {
     const github = {
       git: {
-        getRef: async () => true,
+        getRef: async (): Promise<boolean> =>
+          new Promise<boolean>(resolve => resolve(true)),
         updateRef
       }
     };
-    GitHub.mockImplementation(() => github);
+    mocked(GitHub as any).mockImplementation(() => github);
 
     await run();
 
@@ -62,21 +71,22 @@ describe("Update Major Version", () => {
   test("Fails", async () => {
     const github = {
       git: {
-        getRef: async () => true,
+        getRef: async (): Promise<boolean> =>
+          new Promise(resolve => resolve(true)),
         updateRef: jest.fn().mockRejectedValue(new Error("error"))
       }
     };
-    GitHub.mockImplementation(() => github);
-    core.setFailed = jest.fn();
+    mocked(GitHub as any).mockImplementation(() => github);
+    const spy = jest.spyOn(core, "setFailed");
 
     await run();
 
-    expect(core.setFailed).toHaveBeenCalledWith("error");
+    expect(spy).toHaveBeenCalledWith("error");
   });
 
   test("Fails with not tag reference", async () => {
     context.ref = "refs/heads/master";
-    core.setFailed = jest.fn();
+    (core as any).setFailed = jest.fn();
 
     await run();
 
@@ -85,11 +95,11 @@ describe("Update Major Version", () => {
 
   test("Fails with not semantic versioning tag", async () => {
     context.ref = "refs/tags/v1.2";
-    core.setFailed = jest.fn();
+    const spy = jest.spyOn(core, "setFailed");
 
     await run();
 
-    expect(core.setFailed).toHaveBeenCalledWith(
+    expect(spy).toHaveBeenCalledWith(
       "tags require semantic versioning format like v1.2.3"
     );
   });
