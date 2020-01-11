@@ -1,7 +1,7 @@
-const core = require("@actions/core");
-const { GitHub, context } = require("@actions/github");
+import * as core from "@actions/core";
+import { GitHub, context } from "@actions/github";
 
-async function run() {
+export default async function run(): Promise<void> {
   try {
     const token = core.getInput("github_token");
     const octokit = new GitHub(token);
@@ -50,6 +50,5 @@ async function run() {
   } catch (error) {
     core.setFailed(error.message);
   }
+  return;
 }
-
-module.exports = run;
