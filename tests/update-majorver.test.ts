@@ -32,8 +32,8 @@ describe("Update Major Version", () => {
         getRef: async (): Promise<void> => {
           throw "error";
         },
-        createRef
-      }
+        createRef,
+      },
     };
     mocked(GitHub as any).mockImplementation(() => github);
 
@@ -43,7 +43,7 @@ describe("Update Major Version", () => {
       owner: "nowactions",
       repo: "update-majorver",
       ref: "refs/tags/v1",
-      sha: "commit_sha"
+      sha: "commit_sha",
     });
   });
 
@@ -51,9 +51,9 @@ describe("Update Major Version", () => {
     const github = {
       git: {
         getRef: async (): Promise<boolean> =>
-          new Promise<boolean>(resolve => resolve(true)),
-        updateRef
-      }
+          new Promise<boolean>((resolve) => resolve(true)),
+        updateRef,
+      },
     };
     mocked(GitHub as any).mockImplementation(() => github);
 
@@ -64,7 +64,7 @@ describe("Update Major Version", () => {
       repo: "update-majorver",
       ref: "tags/v1",
       sha: "commit_sha",
-      force: true
+      force: true,
     });
   });
 
@@ -72,9 +72,9 @@ describe("Update Major Version", () => {
     const github = {
       git: {
         getRef: async (): Promise<boolean> =>
-          new Promise(resolve => resolve(true)),
-        updateRef: jest.fn().mockRejectedValue(new Error("error"))
-      }
+          new Promise((resolve) => resolve(true)),
+        updateRef: jest.fn().mockRejectedValue(new Error("error")),
+      },
     };
     mocked(GitHub as any).mockImplementation(() => github);
     const spy = jest.spyOn(core, "setFailed");
