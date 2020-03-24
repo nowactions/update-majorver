@@ -23,7 +23,7 @@ export default async function run(): Promise<void> {
     const getRefParams = {
       owner: context.repo.owner,
       repo: context.repo.repo,
-      ref: `tags/${major}`
+      ref: `tags/${major}`,
     };
 
     let ref;
@@ -38,13 +38,13 @@ export default async function run(): Promise<void> {
       await octokit.git.updateRef({
         ...getRefParams,
         sha,
-        force: true
+        force: true,
       });
     } else {
       await octokit.git.createRef({
         ...getRefParams,
         sha,
-        ref: `refs/tags/${major}`
+        ref: `refs/tags/${major}`,
       });
     }
   } catch (error) {
