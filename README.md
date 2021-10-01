@@ -16,10 +16,6 @@ Create a workflow `.yml` file in your `.github/workflows` directory.
 An [example workflow](#example) is available below.
 For more information, reference the GitHub Help Documentation for [Creating a workflow file](https://help.github.com/en/articles/configuring-a-workflow#creating-a-workflow-file).
 
-### Inputs
-
-- `github_token`: GitHub Token to use GitHub APIs. You do not need to create your own token, set the token provided by Actions for this.
-
 ## Example
 
 ```yml
@@ -36,8 +32,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: nowactions/update-majorver@v1
-        with:
-          github_token: ${{ secrets. GITHUB_TOKEN }}
 ```
 
 ## Development
