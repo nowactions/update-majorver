@@ -2,19 +2,26 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   extends: [
     "config:base",
-    ":timezone(Asia/Tokyo)",
   ],
-  schedule: ["after 2am and before 8am"],
+  timezone: "Asia/Tokyo",
   dependencyDashboard: true,
+  labels: ["renovate"],
   packageRules: [
     {
       matchUpdateTypes: ["pin"],
       automerge: true,
     },
     {
-      matchLanguages: ["node"],
-      matchUpdateTypes: ["minor", "patch"],
+      mathcFiles: ["package.json"],
+      matchUpdateTypes: ["minor"],
       automerge: true,
+      stabilityDays: 7,
+    },
+    {
+      mathcFiles: ["package.json"],
+      matchUpdateTypes: ["patch"],
+      automerge: true,
+      stabilityDays: 3,
     },
   ],
 }
