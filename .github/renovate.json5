@@ -12,13 +12,13 @@
       automerge: true,
     },
     {
-      mathcFiles: ["package.json"],
+      matchFiles: ["package.json"],
       matchUpdateTypes: ["minor"],
       automerge: true,
       stabilityDays: 7,
     },
     {
-      mathcFiles: ["package.json"],
+      matchFiles: ["package.json"],
       matchUpdateTypes: ["patch"],
       automerge: true,
       stabilityDays: 3,
