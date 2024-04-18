@@ -1,6 +1,6 @@
 {
   "name": "update-majorver",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Update major version tags based on semver for GitHub Actions",
   "main": "dist/index.js",
   "scripts": {
