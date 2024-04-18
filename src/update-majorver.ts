@@ -1,12 +1,12 @@
 import * as core from "@actions/core";
-import { GitHub, context } from "@actions/github";
+import { getOctokit, context } from "@actions/github";
 
 const REFS_TAG = "refs/tags/";
 
 export default async function run(): Promise<void> {
   try {
     const token = core.getInput("github_token");
-    const octokit = new GitHub(token);
+    const octokit = getOctokit(token);
 
     if (!context.ref.startsWith(REFS_TAG)) {
       core.setFailed("ref is not a tag");
