@@ -1,34 +1,40 @@
 import * as core from "@actions/core";
 import { GitHub, context } from "@actions/github";
 
+const REFS_TAG = "refs/tags/";
+
 export default async function run(): Promise<void> {
   try {
     const token = core.getInput("github_token");
     const octokit = new GitHub(token);
 
-    if (!context.ref.match(/^refs\/tags\/.+$/)) {
+    if (!context.ref.startsWith(REFS_TAG)) {
       core.setFailed("ref is not a tag");
       return;
     }
 
-    if (!context.ref.match(/^refs\/tags\/v\d+\.\d+\.\d+$/)) {
-      core.setFailed("tags require semantic versioning format like v1.2.3");
+    const tag = context.ref.substring(REFS_TAG.length);
+    const regex = /^v?(?<major>\d+)\.\d+\.\d+$/;
+    const match = tag.match(regex);
+    if (match?.groups?.major == null) {
+      core.setFailed(
+        "tags require semantic versioning format like v1.2.3 or 1.2.3"
+      );
       return;
     }
 
-    const tag = context.ref.split("/")[2];
-    const major = tag.split(".")[0];
+    const major = `v${match.groups.major}`;
     const sha = context.payload.head_commit.id;
 
-    const getRefParams = {
+    const refParams = {
       owner: context.repo.owner,
       repo: context.repo.repo,
-      ref: `tags/${major}`,
+      ref: REFS_TAG + major,
     };
 
     let ref;
     try {
-      ref = await octokit.git.getRef(getRefParams);
+      ref = await octokit.git.getRef(refParams);
       core.info(`tag ${major} already exists`);
     } catch (error) {
       core.info(`tag ${major} does not exist yet`);
@@ -36,15 +42,14 @@ export default async function run(): Promise<void> {
 
     if (ref) {
       await octokit.git.updateRef({
-        ...getRefParams,
+        ...refParams,
         sha,
         force: true,
       });
     } else {
       await octokit.git.createRef({
-        ...getRefParams,
+        ...refParams,
         sha,
-        ref: `refs/tags/${major}`,
       });
     }
   } catch (error) {

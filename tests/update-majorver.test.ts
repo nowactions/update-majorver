@@ -62,7 +62,7 @@ describe("Update Major Version", () => {
     expect(updateRef).toHaveBeenCalledWith({
       owner: "nowactions",
       repo: "update-majorver",
-      ref: "tags/v1",
+      ref: "refs/tags/v1",
       sha: "commit_sha",
       force: true,
     });
@@ -100,7 +100,30 @@ describe("Update Major Version", () => {
     await run();
 
     expect(spy).toHaveBeenCalledWith(
-      "tags require semantic versioning format like v1.2.3"
+      "tags require semantic versioning format like v1.2.3 or 1.2.3"
     );
+  });
+
+  test("Support tag without 'v' prefix", async () => {
+    context.ref = "refs/tags/1.2.3";
+
+    const github = {
+      git: {
+        getRef: async (): Promise<void> => {
+          throw "error";
+        },
+        createRef,
+      },
+    };
+    mocked(GitHub as any).mockImplementation(() => github);
+
+    await run();
+
+    expect(createRef).toHaveBeenCalledWith({
+      owner: "nowactions",
+      repo: "update-majorver",
+      ref: "refs/tags/v1",
+      sha: "commit_sha",
+    });
   });
 });
