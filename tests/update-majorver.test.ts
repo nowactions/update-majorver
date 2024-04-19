@@ -1,16 +1,15 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 /* eslint @typescript-eslint/camelcase: 0 */
+/* eslint @typescript-eslint/ban-ts-ignore: 0 */
 
 import * as core from "@actions/core";
-import { GitHub, context } from "@actions/github";
+import { context, getOctokit } from "@actions/github";
 import run from "../src/update-majorver";
-
-import { mocked } from "ts-jest/utils";
 
 jest.mock("@actions/core");
 jest.mock("@actions/github");
 
-const mockedContext = mocked(context, true);
+const mockedContext = jest.mocked(context, true);
 
 describe("Update Major Version", () => {
   let updateRef: jest.Mock<any, any>;
@@ -19,6 +18,7 @@ describe("Update Major Version", () => {
   beforeEach(() => {
     jest.spyOn(core, "getInput").mockReturnValueOnce("mygithubtoken");
     context.ref = "refs/tags/v1.2.3";
+    // @ts-ignore
     mockedContext.repo = { owner: "nowactions", repo: "update-majorver" };
     context.payload = { head_commit: { id: "commit_sha" } };
 
@@ -35,7 +35,8 @@ describe("Update Major Version", () => {
         createRef,
       },
     };
-    mocked(GitHub as any).mockImplementation(() => github);
+
+    jest.mocked(getOctokit as any).mockImplementation(() => github);
 
     await run();
 
@@ -55,14 +56,14 @@ describe("Update Major Version", () => {
         updateRef,
       },
     };
-    mocked(GitHub as any).mockImplementation(() => github);
+    jest.mocked(getOctokit as any).mockImplementation(() => github);
 
     await run();
 
     expect(updateRef).toHaveBeenCalledWith({
       owner: "nowactions",
       repo: "update-majorver",
-      ref: "tags/v1",
+      ref: "refs/tags/v1",
       sha: "commit_sha",
       force: true,
     });
@@ -76,7 +77,7 @@ describe("Update Major Version", () => {
         updateRef: jest.fn().mockRejectedValue(new Error("error")),
       },
     };
-    mocked(GitHub as any).mockImplementation(() => github);
+    jest.mocked(getOctokit as any).mockImplementation(() => github);
     const spy = jest.spyOn(core, "setFailed");
 
     await run();
@@ -100,7 +101,30 @@ describe("Update Major Version", () => {
     await run();
 
     expect(spy).toHaveBeenCalledWith(
-      "tags require semantic versioning format like v1.2.3"
+      "tags require semantic versioning format like v1.2.3 or 1.2.3"
     );
+  });
+
+  test("Support tag without 'v' prefix", async () => {
+    context.ref = "refs/tags/1.2.3";
+
+    const github = {
+      git: {
+        getRef: async (): Promise<void> => {
+          throw "error";
+        },
+        createRef,
+      },
+    };
+    jest.mocked(getOctokit as any).mockImplementation(() => github);
+
+    await run();
+
+    expect(createRef).toHaveBeenCalledWith({
+      owner: "nowactions",
+      repo: "update-majorver",
+      ref: "refs/tags/v1",
+      sha: "commit_sha",
+    });
   });
 });

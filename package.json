@@ -1,12 +1,13 @@
 {
   "name": "update-majorver",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Update major version tags based on semver for GitHub Actions",
   "main": "dist/index.js",
   "scripts": {
     "lint": "eslint 'src/**.ts' 'tests/**.ts' --fix",
     "test": "eslint 'src/**.ts' 'tests/**.ts' && tsc --noEmit && jest --coverage",
-    "build": "tsc",
+    "watch": "ncc build src/index.ts --watch",
+    "build": "ncc build src/index.ts --license LICENSE --minify --no-cache --out dist",
     "precommit": "npm run build && git add dist/",
     "release": "PACKAGE_VERSION=v$(grep -m1 version package.json | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag -a $PACKAGE_VERSION -m $PACKAGE_VERSION && git push --tags"
   },
@@ -25,23 +26,24 @@
   },
   "homepage": "https://github.com/nowactions/update-majorver#readme",
   "dependencies": {
-    "@actions/core": "^1.2.6",
-    "@actions/github": "^2.2.0"
+    "@actions/core": "^1.10.1",
+    "@actions/github": "^4.0.0"
   },
   "devDependencies": {
-    "@types/jest": "26.0.24",
+    "@types/jest": "27.5.2",
     "@typescript-eslint/eslint-plugin": "2.34.0",
     "@typescript-eslint/parser": "2.34.0",
-    "@zeit/ncc": "0.22.3",
+    "@vercel/ncc": "^0.38.1",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.15.0",
     "eslint-plugin-import": "2.29.1",
     "eslint-plugin-prettier": "3.4.1",
     "husky": "4.3.8",
-    "jest": "26.6.3",
+    "jest": "27.5.1",
+    "jest-mock": "27.5.1",
     "prettier": "2.8.8",
-    "ts-jest": "25.5.1",
-    "typescript": "3.9.10"
+    "ts-jest": "27.1.5",
+    "typescript": "~4.7.4"
   },
   "jest": {
     "testEnvironment": "node",

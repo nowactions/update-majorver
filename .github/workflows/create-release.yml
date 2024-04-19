@@ -2,20 +2,38 @@ name: Create Release
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - main
 
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+
   create-release:
-    name: Create Release
+    needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get Next Version
+        id: semver
+        uses: ietf-tools/semver-action@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          body: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+          token: ${{ github.token }}
+          noVersionBumpBehavior: patch
+
+      - name: Create Changelog
+        id: changelog
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ github.token }}
+          fromTag: ${{ github.ref_name }}
+          toTag: ${{ steps.semver.outputs.current }}
+          writeToFile: false
+          excludeTypes: build,docs,style
+          includeInvalidCommits: true
+  
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ github.token }}
+          tag: ${{ steps.semver.outputs.nextStrict }}
+          body: ${{ steps.changelog.outputs.changes }}
